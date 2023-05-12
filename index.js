@@ -25,13 +25,17 @@ ipcMain.on('videos:added', (event, videos) => {
   const promises = _.map(videos, video => {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(video.path, (err, medatada) => {
-        resolve(medatada);
+        resolve({
+          ...video,
+          duration: medatada.format.duration,
+          format: 'avi'
+        });
       });
     });
   });
 
   Promise.all(promises)
   .then((results) => {
-    console.log(results);
+    mainWindow.webContents.send('metadata:complete', results);
   });
 });

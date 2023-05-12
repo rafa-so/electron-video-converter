@@ -1,4 +1,6 @@
 const electron = require('electron')
+const ffmpeg = require('fluent-ffmpeg');
+
 const { app, BrowserWindow, ipcMain } = electron;
 
 let mainWindow;
@@ -17,7 +19,8 @@ app.on('ready', () => {
   mainWindow.loadURL(`file://${__dirname}/src/index.html`);
 });
 
-
 ipcMain.on('videos:added', (event, videos) => {
-  console.log(videos);
+  ffmpeg.ffprobe(videos[0].path, (err, metadata) => {
+    console.log(metadata);
+  });
 });
